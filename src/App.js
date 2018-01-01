@@ -1,30 +1,12 @@
 import React, { Component } from 'react';
 // import logo from './logo.svg';
 import './App.css';
-import axios from 'axios';
+import SelectDataset from './SelectDataset';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {dataflows: ''}
-  }
-
-  componentDidMount() {
-    axios.get('http://dataservices.imf.org/REST/SDMX_JSON.svc/Dataflow')
-      .then(response => {
-        console.log(response);
-        this.setState({
-          dataflows: response.data.Structure.Dataflows.Dataflow
-                      .map(dataflow =>
-                        <li key={dataflow['@id']}>
-                          {dataflow.Name['#text']}
-                        </li>
-                      )
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    this.state = {}
   }
 
   render() {
@@ -34,9 +16,7 @@ class App extends Component {
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
           <h1 className="App-title">Welcome to IMF Data Explorer</h1>
         </header>
-        <ul className="App-intro">
-          {this.state.dataflows}
-        </ul>
+        <SelectDataset />
       </div>
     );
   }
