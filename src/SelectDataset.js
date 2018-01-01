@@ -6,11 +6,13 @@ class SelectDataset extends Component {
         super(props);
         this.state = {
             datasets: []
-        }
+        };
+
+        this.onChange = this.onChange.bind(this);
     }
 
     compareDatasets(a, b) {
-        return a.Name['#text'].localeCompare(b.Name['#text'])
+        return a.Name['#text'].localeCompare(b.Name['#text']);
     }
 
     componentDidMount() {
@@ -27,16 +29,20 @@ class SelectDataset extends Component {
         });
     }
 
+    onChange(event) {
+        this.props.onChange(event.target.value);
+    }
+
     render() {
         return (
-            <select>
+            <select value={this.props.value} onChange={this.onChange}>
                 {this.state.datasets.map(dataset =>
-                    <option key={dataset['@id']} value={dataset['@id']}>
-                        {dataset.Name['#text']
-                    }</option>
-                )};
+                    <option key={dataset['@id']} value={dataset.KeyFamilyRef.KeyFamilyID}>
+                        {dataset.Name['#text']}
+                    </option>
+                )}
             </select>
-        )
+        );
     }
 }
 
