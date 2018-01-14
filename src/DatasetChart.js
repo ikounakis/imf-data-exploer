@@ -15,17 +15,7 @@ class DatasetChart extends Component {
       series: [{
           name: 'N/A',
           data: []
-      }],
-      lang: {
-        noData: "No data"
-      },
-      noData: {
-        style: {
-          fontWeight: 'bold',
-          fontSize: '15px',
-          color: '#303030'
-        }
-      }
+      }]
     });
   }
 
@@ -67,10 +57,7 @@ class DatasetChart extends Component {
         series: [{
           name: seriesName,
           data: seriesData
-        }],
-        lang: {
-          noData: "Your custom message"
-        }
+        }]
       });
     }
 
