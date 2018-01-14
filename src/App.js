@@ -16,7 +16,6 @@ class App extends Component {
       datasets: [],
       selectedDataset: 'default',
       codeLists: new Map(),
-      concepts: new Map(),
       dimensions: [],
       annotations: new Map(),
       selectedDimensions: {},
@@ -59,21 +58,25 @@ class App extends Component {
     return axios.get(`http://dataservices.imf.org/REST/SDMX_JSON.svc/DataStructure/${this.state.selectedDataset}`)
       .then(response => {
         console.log(response);
-        
-        const codeLists = new Map(response.data.Structure.CodeLists.CodeList.map(c => [c['@id'], c]));
-        const concepts = new Map(response.data.Structure.Concepts.ConceptScheme.Concept.map(c => [c['@id'], c]));
-        const dimensions = response.data.Structure.KeyFamilies.KeyFamily.Components.Dimension;
-        const annotations = new Map(response.data.Structure.KeyFamilies.KeyFamily.Annotations.Annotation.map(a => [a.AnnotationTitle, a]));
+        let codeLists = new Map();
+        let dimensions = [];
+        let annotations = new Map();
+        let selectedDimensions = {};
 
-        const getFirstCodeValue = (map, obj) => {
-          map[obj['@codelist']] = codeLists.get(obj['@codelist']).Code[0]['@value'];
-          return map;
+        if (response.data.Structure) {
+          codeLists = new Map(response.data.Structure.CodeLists.CodeList.map(c => [c['@id'], c]));
+          dimensions = response.data.Structure.KeyFamilies.KeyFamily.Components.Dimension;
+          annotations = new Map(response.data.Structure.KeyFamilies.KeyFamily.Annotations.Annotation.map(a => [a.AnnotationTitle, a]));
+
+          const getFirstCodeValue = (map, obj) => {
+            map[obj['@codelist']] = codeLists.get(obj['@codelist']).Code[0]['@value'];
+            return map;
+          }
+          selectedDimensions = this.arrayToMap(dimensions, getFirstCodeValue);
         }
-        const selectedDimensions = this.arrayToMap(dimensions, getFirstCodeValue);
-        
+
         this.setState({
           codeLists,
-          concepts,
           dimensions,
           annotations,
           selectedDimensions
