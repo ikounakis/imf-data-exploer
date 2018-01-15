@@ -4,9 +4,10 @@ import './App.css';
 import axios from 'axios';
 import { isEqual } from 'lodash';
 import DatasetSelect from './DatasetSelect';
+import DatasetDimensions from './DatasetDimensions';
+import DatasetPeriod from './DatasetPeriod';
 import DatasetOverview from './DatasetOverview';
 import DatasetChart from './DatasetChart';
-import DatasetDimensions from './DatasetDimensions';
 
 class App extends Component {
   constructor(props) {
@@ -19,13 +20,16 @@ class App extends Component {
       dimensions: [],
       annotations: new Map(),
       selectedDimensions: {},
-      startPeriod: '1945',
-      endPeriod: '2020',
+      selectedPeriod: {
+        start: '1990',
+        end: '2020'
+      },
       selectedSeries: null
     };
 
     this.onDatasetChange = this.onDatasetChange.bind(this);
     this.onDimensionChange = this.onDimensionChange.bind(this);
+    this.onPeriodChange = this.onPeriodChange.bind(this);
   }
 
   arrayToMap(array, callback) {
@@ -88,19 +92,21 @@ class App extends Component {
   }
 
   getData() {
-    const dimensions = Object.values(this.state.selectedDimensions).join('.');
-    const query = `${this.state.selectedDataset}/${dimensions}?startPeriod=${this.state.startPeriod}&endPeriod=${this.state.endPeriod}`
-    console.log(query);
-    
-    return axios.get(`http://dataservices.imf.org/REST/SDMX_JSON.svc/CompactData/${query}`)
-      .then(response => {
-        console.log(response);
-        const selectedSeries = response.data.CompactData.DataSet.Series;
-        this.setState({ selectedSeries })
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    if (Object.values(this.state.selectedPeriod).every(year => year.length == 4)) {
+      const dimensions = Object.values(this.state.selectedDimensions).join('.');
+      const query = `${this.state.selectedDataset}/${dimensions}?startPeriod=${this.state.selectedPeriod.start}&endPeriod=${this.state.selectedPeriod.end}`
+      console.log(query);
+
+      return axios.get(`http://dataservices.imf.org/REST/SDMX_JSON.svc/CompactData/${query}`)
+        .then(response => {
+          console.log(response);
+          const selectedSeries = response.data.CompactData.DataSet.Series;
+          this.setState({ selectedSeries })
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
   }
 
   componentDidMount() {
@@ -112,7 +118,10 @@ class App extends Component {
       this.getDataStructure();
     }
 
-    if (!isEqual(this.state.selectedDimensions, prevState.selectedDimensions)) {
+    if (
+      !isEqual(this.state.selectedDimensions, prevState.selectedDimensions) ||
+      !isEqual(this.state.selectedPeriod, prevState.selectedPeriod)
+    ) {
       this.getData();
     }
   }
@@ -121,11 +130,19 @@ class App extends Component {
     this.setState({ selectedDataset });
   }
 
-  onDimensionChange(selectedDimension) {
+  onDimensionChange(datasetDimension) {
     this.setState((prevState, props) => {
       const selectedDimensions = Object.assign({}, prevState.selectedDimensions);
-      selectedDimensions[selectedDimension.id] = selectedDimension.value;
+      selectedDimensions[datasetDimension.id] = datasetDimension.value;
       return { selectedDimensions };
+    });
+  }
+
+  onPeriodChange(datasetPeriod) {
+    this.setState((prevState, props) => {
+      const selectedPeriod = Object.assign({}, prevState.selectedPeriod);
+      selectedPeriod[datasetPeriod.id] = datasetPeriod.value;
+      return { selectedPeriod };
     });
   }
 
@@ -146,6 +163,10 @@ class App extends Component {
           dimensions={this.state.dimensions}
           value={this.state.selectedDimensions}
           onChange={this.onDimensionChange}
+        />
+        <DatasetPeriod
+          value={this.state.selectedPeriod}
+          onChange={this.onPeriodChange}
         />
         <DatasetOverview annotations={this.state.annotations} />
         <DatasetChart
