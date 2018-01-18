@@ -1,4 +1,5 @@
 # [IMF Data Explorer](https://ikounakis.github.io/imf-data-explorer/)
+
 This is a simple UI for the graphical exploration of the data provided by the IMF [JSON RESTful Web Service](http://datahelp.imf.org/knowledgebase/articles/667681-using-json-restful-web-service).
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/77cac01c477ca812fba2)
@@ -22,12 +23,26 @@ Please come back to try the [IMF Data Explorer](https://ikounakis.github.io/imf-
 * Because user pages from github.io are served over https but the IMF Web Service provides data over http, all browsers will complain about the use of [mixed content](https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content) and will block the requests to IMF.
 Most browsers however, will allow you to **tempararily disable** this security feature by clicking on a popup or shield/lock icon in their address bar.
 
-* Because the IMF Web Service doesn't return the necessary [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) headers, all browsers will block the cross-origin requests from github.io to imf.org. Thankfully, there are addons for most browsers that will simulate the necessary headers so please the one for your browser from the list below
+* Because the IMF Web Service doesn't return the necessary [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) headers, all browsers will block the cross-origin requests from github.io to imf.org. Thankfully, there are addons for most browsers that will simulate the necessary headers so please use the one for your browser from the list below
 
-  * [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cors-everywhere/)
-  * [Chrome](https://chrome.google.com/webstore/detail/cors-toggle/jioikioepegflmdnbocfhgmpmopmjkim?hl=en)
-  * [Opera](https://addons.opera.com/en/extensions/details/cors-toggle/?display=en)
+  - [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cors-everywhere/)
+  - [Chrome](https://chrome.google.com/webstore/detail/cors-toggle/jioikioepegflmdnbocfhgmpmopmjkim?hl=en)
+  - [Opera](https://addons.opera.com/en/extensions/details/cors-toggle/?display=en)
 
 * Finally, the IMF Web Service imposes a certain limit to the number of requests it will server from the same origin, so please wait a few seconds if you reach that limit while using the UI.
 
   Thank you for your patience and understanding!
+
+## TODO
+
+* Selection of multiple geographical areas
+* Export of charts and underlying data
+* Support for different types of charts including geographical heatmaps
+* Addition of multiple charts with custom layout
+* Addition of missing datasets such as the World Economic Outlook
+* Integration with a proxy API (AWS API Gateway + Lambda)
+  - This would actually solve the main access limitations mentioned above, by isolating the user from unsafe content and enabling full https and CORS support.
+* Additonal data manipulation with various mathematical, statistical and econometric functions
+* Chart annotations with metadata related to the underlying area and period
+  - News extracted from Google News
+  - Social sentiment extracted from Twitter
